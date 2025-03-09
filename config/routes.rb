@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
   get "/api/v1/merchants", to: "api/v1/merchants#index" 
   get "api/v1/items", to: "api/v1/items#index"
+
   get "/api/v1/merchants/:id", to: "api/v1/merchants#show"
   post "/api/v1/merchants", to: "api/v1/merchants#create"
   get "/api/v1/items/:id", to: "api/v1/items#show"
@@ -31,4 +32,12 @@ Rails.application.routes.draw do
 
   get "/api/v1/merchants/:merchant_id/customers", to: "api/v1/merchant_customers#index"
   get "/api/v1/merchants/:merchant_id/invoices", to: "api/v1/merchant_invoices#index"
+
+  #routes for solo project coupons 
+  get "api/v1/merchants/:merchant_id/coupons", to: "api/v1/merchant_coupons#index"
+  get "api/v1/coupons/:id", to: "api/v1/coupons#show"
+  post "/api/v1/coupons", to: "api/v1/coupons#create"
+
+
+
 end

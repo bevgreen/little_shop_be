@@ -16,7 +16,7 @@ describe Invoice, type: :model do
       @merchant3 = Merchant.create!(name: "Jackson")
       @merchant4 = Merchant.create!(name: "Jason")
   
-     
+
       @customer1 = Customer.create!(first_name: "John J.", last_name: "Jingleheimerschmidt")
       @customer2 = Customer.create!(first_name: "Timmy", last_name: "Turner")
       @customer3 = Customer.create!(first_name: "Spongebob", last_name: "Squarepants")
