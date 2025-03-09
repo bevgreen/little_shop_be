@@ -1,6 +1,8 @@
 require 'rails_helper'
+require 'pry'
 
-RSpec.describe Coupon, type: :model do
+RSpec.describe "Coupons endpoints", type: :request do
+
 
     before(:each) do
         Merchant.destroy_all
@@ -15,7 +17,25 @@ RSpec.describe Coupon, type: :model do
         @coupon4 = Coupon.create!(name: "Early Bird Sale", code: "SPRING20", value: 0.20, merchant: @merchant4)
     end
 
-    describe "relationships" do
-        it { should belong_to :merchant }
+
+    describe "#index" do
+        it 'can retrieve all coupons' do
+            get '/api/v1/items'
+
+            expect(response).to be_successful
+            items = JSON.parse(response.body, symbolize_names: true)
+        end
+    
+        
     end
+
+
+
+
+
+
+
+
+
+
 end
