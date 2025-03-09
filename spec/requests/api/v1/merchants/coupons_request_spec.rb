@@ -20,10 +20,17 @@ RSpec.describe "Coupons endpoints", type: :request do
 
     describe "#index" do
         it 'can retrieve all coupons' do
-            get '/api/v1/items'
+            get '/api/v1/coupons'
 
             expect(response).to be_successful
-            items = JSON.parse(response.body, symbolize_names: true)
+            coupons = JSON.parse(response.body, symbolize_names: true)
+            expect(coupons[:data].count).to eq(4)
+            expect(coupons[:data][0][:id]).to eq("#{@coupon1.id}")
+            expect(coupons[:data][0][:type]).to eq("coupon")
+            expect(coupons[:data][0][:attributes]).to be_a(Hash)
+            expect(coupons[:data][0][:attributes][:name]).to eq("Holiday Sale")
+            expect(coupons[:data][0][:attributes][:code]).to eq("BEMERRY")
+            expect(coupons[:data][0][:attributes][:value]).to eq("0.3")
         end
     
         
