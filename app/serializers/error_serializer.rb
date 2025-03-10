@@ -35,4 +35,13 @@ class ErrorSerializer
     }
   end
 
+  def self.format(errors)
+    {
+      data: {
+        message: "Validation failed",
+        errors: errors.is_a?(Array) ? errors : [errors] # Ensure errors are always an array
+      }
+    }
+  end
+
 end
