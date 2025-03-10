@@ -1,7 +1,7 @@
 class Api::V1::MerchantCouponsController < ApplicationController
     rescue_from ActiveRecord::RecordInvalid, with: :handle_invalid_record
     rescue_from ActiveRecord::RecordNotFound, with: :merchant_not_found
-    # rescue_from ActiveRecord::RecordNotFound, with: :coupon_not_found
+    rescue_from ActiveRecord::RecordNotUnique, with: :handle_record_not_unique
     def index
         merchant = Merchant.find(params[:merchant_id])
         coupons = merchant.coupons.all
@@ -15,8 +15,13 @@ class Api::V1::MerchantCouponsController < ApplicationController
     end
 
     def create
-        coupon = Coupon.create!(coupon_update_params) 
-        render json: CouponSerializer.new(coupon), status: 201
+        coupon = Coupon.new(coupon_update_params)
+
+        if coupon.save
+            render json: CouponSerializer.new(coupon), status: 200
+        else
+            render json: ErrorSerializer.format(coupon.errors.full_messages), status: :unprocessable_entity
+        end
     end
 
     def update
@@ -56,7 +61,7 @@ class Api::V1::MerchantCouponsController < ApplicationController
         render json: ErrorSerializer.handle_exception(exception, "Merchant not found"), status: :not_found
     end
 
-    # def coupon_not_found(exception)
-    #     render json: ErrorSerializer.handle_exception(exception, "Coupon not found"), status: :not_found
-    # end
+    def handle_record_not_unique(exception)
+        render json: ErrorSerializer.format("Code has already been taken"), status: :unprocessable_entity
+    end
 end
