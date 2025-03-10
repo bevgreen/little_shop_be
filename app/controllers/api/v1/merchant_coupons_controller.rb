@@ -3,9 +3,14 @@ class Api::V1::MerchantCouponsController < ApplicationController
     rescue_from ActiveRecord::RecordNotFound, with: :merchant_not_found
     rescue_from ActiveRecord::RecordNotUnique, with: :handle_record_not_unique
     def index
-        merchant = Merchant.find(params[:merchant_id])
-        coupons = merchant.coupons.all
-    
+        if params[:merchant_id].present?
+            coupons = Coupon.where(merchant_id: params[:merchant_id])
+        elsif params[:status].present?
+            cleaned_status = params[:status].strip #postman was adding a '/n' to my status param?
+            coupons = Coupon.where(status: cleaned_status)
+        else 
+            coupons = Coupon.all
+        end
         render json: CouponSerializer.new(coupons)
     end
 

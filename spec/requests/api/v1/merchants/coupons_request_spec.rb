@@ -84,7 +84,7 @@ RSpec.describe "Merchant Coupons endpoints", type: :request do
             expect(json[:data][:type]).to eq("coupon")
         end
 
-        it "does not allow a coupon to be created with a duplicate code" do
+        it "sad path: does not allow a coupon to be created with a duplicate code" do
             Coupon.create!(name: "Spring Cleaning Sale", code: "SPRING100", value: 0.2, status: "active", merchant_id: @merchant1.id)
 
             post "/api/v1/coupons", 
@@ -101,7 +101,6 @@ RSpec.describe "Merchant Coupons endpoints", type: :request do
 
     describe '#update coupon' do
         it 'can update the status of a coupon' do
-
             coupon = Coupon.create!(name: "Summer Sale", code: "SUMMER25", value: 0.1, status: "inactive", merchant_id: @merchant1.id)
 
             patch "/api/v1/coupons/#{coupon.id}", 
@@ -115,7 +114,7 @@ RSpec.describe "Merchant Coupons endpoints", type: :request do
             expect(coupon.reload.status).to eq("active")
         end
 
-        it "does not allow a coupon to be activated if a merchant has 5 active already" do
+        it "sad path: does not allow a coupon to be activated if a merchant has 5 active already" do
             Coupon.create!(name: "Active Discount 1", code: "ACTIVE1", value: 0.1, status: "active", merchant_id: @merchant3.id)
             Coupon.create!(name: "Active Discount 2", code: "ACTIVE2", value: 0.1, status: "active", merchant_id: @merchant3.id)
             Coupon.create!(name: "Active Discount 3", code: "ACTIVE3", value: 0.1, status: "active", merchant_id: @merchant3.id)
@@ -135,7 +134,7 @@ RSpec.describe "Merchant Coupons endpoints", type: :request do
             expect(inactive_coupon.reload.status).to eq("inactive")
         end
 
-        it "does not allow the coupon to be deactivated if it has pending invoices" do
+        it "sad path: does not allow the coupon to be deactivated if it has pending invoices" do
             customer = Customer.create!(first_name: "John J.", last_name: "Jingleheimerschmidt")
             Invoice.create!(merchant_id: @merchant1.id, customer_id: customer.id, coupon_id: @coupon1.id, status: "pending")
     
