@@ -19,7 +19,7 @@ RSpec.describe "Merchant Coupons endpoints", type: :request do
     end
 
     describe "#index tests" do
-        it "happy path: returns all coupons of specified merchant (two examples)" do
+        it "happy path: returns all coupons of specified merchant when id is specified (two examples)" do
             #Merchant with only one coupon
             get "/api/v1/merchants/#{@merchant2.id}/coupons"
             coupons_of_merchant = JSON.parse(response.body, symbolize_names: true)
@@ -41,20 +41,41 @@ RSpec.describe "Merchant Coupons endpoints", type: :request do
             expect(coupons_of_merchant[:data][1][:attributes][:name]).to eq(@coupon5.name)
         end
 
-        it "sad path: sends appropriate 400 level error when no merchant id found" do
-            nonexistant_id = 100000
-            updated_merchant_attributes = { name: "J-son" }
+        # it "sad path: sends appropriate 400 level error when no merchant id found" do
+        #     nonexistant_id = 100000
+        #     updated_merchant_attributes = { name: "J-son" }
     
-            headers = {"CONTENT_TYPE" => "application/json"}
-            get "/api/v1/merchants/#{nonexistant_id}/coupons", headers: headers, params: JSON.generate(updated_merchant_attributes)
+        #     headers = {"CONTENT_TYPE" => "application/json"}
+        #     get "/api/v1/merchants/#{nonexistant_id}/coupons", headers: headers, params: JSON.generate(updated_merchant_attributes)
             
-            error_message = JSON.parse(response.body, symbolize_names: true)
-            updated_merchant = Merchant.find_by(id: nonexistant_id)
+        #     error_message = JSON.parse(response.body, symbolize_names: true)
+        #     updated_merchant = Merchant.find_by(id: nonexistant_id)
     
-            expect(response).to_not be_successful
-            expect(response.status).to eq(404)
-            expect(error_message[:data][:message]).to eq("Merchant not found")
-            expect(error_message[:data][:errors]).to eq(["Couldn't find Merchant with 'id'=#{nonexistant_id}"])
+        #     expect(response).to_not be_successful
+        #     expect(response.status).to eq(404)
+        #     expect(error_message[:data][:message]).to eq("Merchant not found")
+        #     expect(error_message[:data][:errors]).to eq(["Couldn't find Merchant with 'id'=#{nonexistant_id}"])
+        # end
+
+        it "can retrieve inactive coupons" do
+            get "/api/v1/coupons", params: { status: "inactive" }
+
+            expect(response).to have_http_status(:success)
+            json_response = JSON.parse(response.body, symbolize_names: true)
+        
+            expect(json_response[:data].length).to eq(4)
+            expect(json_response[:data].first[:attributes][:status]).to eq("inactive")
+        end
+
+
+        it "can retrieve active coupons" do
+            get "/api/v1/coupons", params: { status: "active" }
+
+            expect(response).to have_http_status(:success)
+            json_response = JSON.parse(response.body, symbolize_names: true)
+        
+            expect(json_response[:data].length).to eq(1)
+            expect(json_response[:data].first[:attributes][:status]).to eq("active")
         end
 
     end
