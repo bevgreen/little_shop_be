@@ -34,10 +34,11 @@ Rails.application.routes.draw do
   get "/api/v1/merchants/:merchant_id/invoices", to: "api/v1/merchant_invoices#index"
 
   #routes for solo project coupons 
-  get "api/v1/merchants/:merchant_id/coupons", to: "api/v1/merchant_coupons#index"
-  get "api/v1/coupons/:id", to: "api/v1/coupons#show"
-  post "/api/v1/coupons", to: "api/v1/coupons#create"
-
+  get "api/v1/merchants/:merchant_id/coupons", to: "api/v1/merchant_coupons#index" #getting all coupons for a specific merchant
+  get "api/v1/coupons", to: "api/v1/merchant_coupons#index" #for filtering coupons by status
+  get "api/v1/coupons/:id", to: "api/v1/merchant_coupons#show"
+  post "/api/v1/coupons", to: "api/v1/merchant_coupons#create"
+  patch "api/v1/coupons/:id", to: "api/v1/merchant_coupons#update"
 
 
 end

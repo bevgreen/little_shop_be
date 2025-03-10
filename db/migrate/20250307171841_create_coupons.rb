@@ -4,6 +4,7 @@ class CreateCoupons < ActiveRecord::Migration[7.1]
       t.string :name
       t.string :code
       t.decimal :value
+      t.string :status, default: "inactive"
 
       t.timestamps
     end
