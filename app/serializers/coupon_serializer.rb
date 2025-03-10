@@ -3,6 +3,6 @@ class CouponSerializer
     attributes :name, :code, :value, :status, :merchant_id
     
     attribute :use_count do |coupon|
-        coupon.use_count
+        Coupon.use_count(coupon.id)
     end
 end

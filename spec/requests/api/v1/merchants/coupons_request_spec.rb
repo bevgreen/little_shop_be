@@ -73,16 +73,6 @@ RSpec.describe "Merchant Coupons endpoints", type: :request do
             expect(json[:data][:attributes]).to be_a(Hash)
             expect(json[:data][:attributes][:name]).to eq(coupon.name)
         end
-
-        # it "sad path: returns an error message when merchant does not exist" do
-        #     get "/api/v1/coupons/1000" 
-
-        #     expect(response).to have_http_status(:not_found)
-        #     json = JSON.parse(response.body, symbolize_names: true)
-        #     expect(json[:data][:message]).to eq("Coupon not found")
-        #     expect(json[:data][:errors]).to be_a(Array)
-        #     expect(json[:data][:errors][0]).to eq("Couldn't find Coupon with 'id'=1000")
-        # end
     end
 
     describe "#create coupon" do
