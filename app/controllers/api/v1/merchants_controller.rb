@@ -13,7 +13,20 @@ class Api::V1::MerchantsController < ApplicationController
       merchants = Merchant.has_returned_items
     end
 
-    render json: MerchantSerializer.new(merchants, { params: { count: params[:count] } })
+    merchants_with_counts = merchants.map do |merchant|
+      {
+        id: merchant.id,
+        name: merchant.name,
+        coupons_count: merchant.coupons.count, 
+        invoice_coupon_count: merchant.invoices.where.not(coupon_id: nil).count 
+      }
+    end
+
+    render json: {
+      data: merchants_with_counts,
+      count_param: params[:count]
+    }
+    
   end
 
   
