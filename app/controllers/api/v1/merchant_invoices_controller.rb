@@ -41,11 +41,4 @@ class Api::V1::MerchantInvoicesController < ApplicationController
 
     render json: InvoiceSerializer.new(invoice), status: :ok
   end
-
-  private 
-
-  def add_coupon_to_invoice
-    params.require(:coupon).permit(:id)
-  end
-
 end
