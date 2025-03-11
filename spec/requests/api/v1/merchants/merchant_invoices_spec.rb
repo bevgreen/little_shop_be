@@ -43,4 +43,26 @@ RSpec.describe "Merchant Invoice Update endpoint", type: :request do
         end
     end
 
+    describe "#index method for invoice controller" do #not done in previous project grrr I'm spending so much time on testing...
+        merchant = Merchant.create!(name: "Barbara")
+
+        customer1 = Customer.create!(first_name: "John J.", last_name: "Jingleheimerschmidt")
+        customer2 = Customer.create!(first_name: "Timmy", last_name: "Turner")
+        customer3 = Customer.create!(first_name: "Spongebob", last_name: "Squarepants")
+
+        invoice1 = Invoice.create!(customer_id: customer1.id, merchant_id: merchant.id, status: "shipped")
+        invoice2 = Invoice.create!(customer_id: customer1.id, merchant_id: merchant.id, status: "returned")
+        invoice3 = Invoice.create!(customer_id: customer2.id, merchant_id: merchant.id, status: "shipped")
+        invoice4 = Invoice.create!(customer_id: customer3.id, merchant_id: merchant.id, status: "shipped")
+
+            it "returns all invoices for the merchant" do
+                get "/api/v1/merchants/#{merchant.id}/invoices"
+        
+                expect(response).to have_http_status(:success)
+                json_response = JSON.parse(response.body, symbolize_names: true)
+        
+                expect(json_response[:data].length).to eq(4)
+            end
+        end
+
 end
