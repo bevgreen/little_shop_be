@@ -1,21 +1,16 @@
 class Api::V1::MerchantCouponsController < ApplicationController
+
     rescue_from ActiveRecord::RecordInvalid, with: :handle_invalid_record
     rescue_from ActiveRecord::RecordNotFound, with: :merchant_not_found
     rescue_from ActiveRecord::RecordNotUnique, with: :handle_record_not_unique
+
     def index
-        if params[:merchant_id].present?
-            coupons = Coupon.where(merchant_id: params[:merchant_id])
-        elsif params[:status].present?
-            cleaned_status = params[:status].strip #postman was adding a '/n' to my status param?
-            coupons = Coupon.where(status: cleaned_status)
-        else 
-            coupons = Coupon.all
-        end
+        coupons = Coupon.filtered(params)  
         render json: CouponSerializer.new(coupons)
     end
 
     def show
-        coupon = Coupon.find(params[:id])
+        coupon = Coupon.find_coupon(params[:id])
         render json: CouponSerializer.new(coupon)
     end
 
@@ -30,26 +25,13 @@ class Api::V1::MerchantCouponsController < ApplicationController
     end
 
     def update
-        coupon = Coupon.find(params[:id])
-        new_status = params[:status]
-        if new_status == "active"
-            if coupon.merchant.coupons.where(status: "active").count >= 5
-                render json: ErrorSerializer.format(["Merchant can only have a maximum of 5 active coupons."]), status: :unprocessable_entity
-                return
-            end
-        end
-        
-        if new_status == "inactive"
-            if coupon.invoices.where(status: "pending").exists?
-                render json: ErrorSerializer.format(["Cannot deactivate a coupon with pending invoices."]), status: :unprocessable_entity
-                return
-            end
-        end
-        
-        if coupon.update(status: new_status)
-            render json: CouponSerializer.new(coupon), status: :ok
+        coupon = Coupon.find_coupon(params[:id])
+        result = coupon.update_status(params[:status]) 
+
+        if result[:success]
+            render json: CouponSerializer.new(result[:coupon]), status: :ok
         else
-            render json: ErrorSerializer.format(coupon.errors.full_messages), status: :unprocessable_entity
+            render json: ErrorSerializer.format([result[:error]]), status: :unprocessable_entity
         end
     end
 
