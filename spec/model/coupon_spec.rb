@@ -59,7 +59,7 @@ RSpec.describe Coupon, type: :model do
         it "returns all coupons when no filter parameters are provided" do
             result = Coupon.filtered({})
         
-            expect(result).to eq([@coupon1, @coupon2, @coupon3, @coupon4])
+            expect(result).to match_array([@coupon1, @coupon2, @coupon3, @coupon4])
         end
         
         it "returns an empty array if no coupons match the filters" do

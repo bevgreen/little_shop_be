@@ -8,9 +8,10 @@ class Coupon < ApplicationRecord
     end
 
     def self.filtered(params)
-        query = Coupon.where(params.slice(:merchant_id))
+        query = Coupon.all
+        query = query.where(merchant_id: params[:merchant_id]) if params[:merchant_id].present?
         query = query.where(status: params[:status].strip) if params[:status].present?
-        return query
+        query
     end
     
     def can_be_activated?
