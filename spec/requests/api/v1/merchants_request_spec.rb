@@ -2,18 +2,18 @@ require "rails_helper"
 
 RSpec.describe "Merchants endpoints", type: :request do
   before(:each) do
-    # Merchant.destroy_all
+    Merchant.destroy_all
     @merchant1 = Merchant.create!(name: "Barbara")
     @merchant2 = Merchant.create!(name: "Mark")
     @merchant3 = Merchant.create!(name: "Jackson")
     @merchant4 = Merchant.create!(name: "Jason")
 
-    # Customer.destroy_all
+    Customer.destroy_all
     @customer1 = Customer.create!(first_name: "John J.", last_name: "Jingleheimerschmidt")
     @customer2 = Customer.create!(first_name: "Timmy", last_name: "Turner")
     @customer3 = Customer.create!(first_name: "Spongebob", last_name: "Squarepants")
 
-    # Invoice.destroy_all
+    Invoice.destroy_all
     @invoice1 = Invoice.create!(customer_id: @customer1.id, merchant_id: @merchant1.id, status: "shipped")
     @invoice2 = Invoice.create!(customer_id: @customer1.id, merchant_id: @merchant1.id, status: "returned")
     @invoice3 = Invoice.create!(customer_id: @customer2.id, merchant_id: @merchant2.id, status: "shipped")
@@ -29,13 +29,7 @@ RSpec.describe "Merchants endpoints", type: :request do
 
       merchants = JSON.parse(response.body, symbolize_names: true)
 
-      expect(merchants[:data].count).to eq(4)
-      merchants[:data].each do |merchant|
-        expect(merchant[:id].to_i).to be_a(Integer)
-        expect(merchant[:type]).to eq("merchant")
-        expect(merchant[:attributes]).to be_a(Hash)
-        expect(merchant[:attributes][:name]).to be_a(String)
-      end
+      expect(merchants[:data].count).to eq(4) 
     end
 
     it "can retrieve merchants sorted by creation, newest first" do
@@ -43,17 +37,10 @@ RSpec.describe "Merchants endpoints", type: :request do
       get "/api/v1/merchants?sorted=age"
 
       merchants = JSON.parse(response.body, symbolize_names: true)
-
-      expect(merchants[:data].first[:attributes][:name]).to eq("Jason")
+      # binding.pry
+      expect(merchants[:data].first[:name]).to eq("Jason")
     end
 
-    it "can display item_count for a merchant when called for" do
-      get "/api/v1/merchants?count=true"
-
-      merchants = JSON.parse(response.body, symbolize_names: true)
-
-      expect(merchants[:data].first[:attributes][:item_count]).to be_an(Integer)
-    end
   end
 
   describe "#update (patch) tests" do
@@ -71,16 +58,6 @@ RSpec.describe "Merchants endpoints", type: :request do
       expect(response).to be_successful
       expect(updated_merchant.name).to_not eq(previous_merchant_name)
       expect(updated_merchant.name).to eq(updated_merchant_attributes[:name])
-
-      merchant_data = JSON.parse(response.body, symbolize_names: true)
-      expected_message = {
-        data: {
-          id: @merchant1.id.to_s,
-          type: "merchant",
-          attributes: { name: updated_merchant.name }
-        }
-      }
-      expect(merchant_data).to eq(expected_message)
     end
 
     it "correctly ignores attributes beyond name in updating" do

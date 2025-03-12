@@ -31,12 +31,13 @@ Rails.application.routes.draw do
   delete "/api/v1/items/:id", to: "api/v1/items#destroy"
 
   get "/api/v1/merchants/:merchant_id/customers", to: "api/v1/merchant_customers#index"
-  get "/api/v1/merchants/:merchant_id/invoices", to: "api/v1/merchant_invoices#index"
+  get "/api/v1/merchants/:merchant_id/invoices", to: "api/v1/merchant_invoices#index" # moved this into solo project section but may mess up previous tests
 
   #routes for solo project coupons 
   get "api/v1/merchants/:merchant_id/coupons", to: "api/v1/merchant_coupons#index" #getting all coupons for a specific merchant
   get "api/v1/coupons", to: "api/v1/merchant_coupons#index" #for filtering coupons by status
   get "api/v1/coupons/:id", to: "api/v1/merchant_coupons#show"
+  patch "/api/v1/merchants/:merchant_id/invoices/:id", to: "api/v1/merchant_invoices#update"
   post "/api/v1/coupons", to: "api/v1/merchant_coupons#create"
   patch "api/v1/coupons/:id", to: "api/v1/merchant_coupons#update"
 
